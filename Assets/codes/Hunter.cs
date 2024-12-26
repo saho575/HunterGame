@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,30 +10,34 @@ public class Hunter : MonoBehaviour
     private int currentPathIndex = 0;
     public float moveSpeed = 2f; // NPC hareket hýzý
     public GameObject Target;
+    private Coroutine moveCoroutine;
 
     void Start()
     {
-        
-        startNode = gridManager.GetNode(gridManager.WorldToBoardPosition(transform.position));
-        Debug.Log(startNode);
-    
-        targetNode = gridManager.GetNode(gridManager.WorldToBoardPosition(Target.transform.position));
-
         if (gridManager == null)
         {
             Debug.LogError("GridManager bulunamadý!");
             return;
         }
 
+        startNode = gridManager.GetNode(gridManager.WorldToBoardPosition(transform.position));
+        targetNode = gridManager.GetNode(gridManager.WorldToBoardPosition(Target.transform.position));
+
         CalculatePath(); // Yolu hesapla
-        if (path != null && path.Count > 0)
-        {
-            StartCoroutine(MoveAlongPath());
-        }
+        StartMovement();
     }
 
     void Update()
     {
+        Node newTargetNode = gridManager.GetNode(gridManager.WorldToBoardPosition(Target.transform.position));
+        startNode = gridManager.GetNode(gridManager.WorldToBoardPosition(transform.position));
+        if (targetNode == null || targetNode.BoardPosition != newTargetNode.BoardPosition)
+        {
+            // Hedef deðiþtiðinde yolu yeniden hesapla ve hareketi sýfýrla
+            targetNode = newTargetNode;
+            CalculatePath();
+            StartMovement();
+        }
 
         Flip();
     }
@@ -47,6 +50,23 @@ public class Hunter : MonoBehaviour
         if (path == null)
         {
             Debug.LogWarning("Hedefe giden bir yol bulunamadý.");
+        }
+        else
+        {
+            currentPathIndex = 0; // Yeni yol için index sýfýrla
+        }
+    }
+
+    void StartMovement()
+    {
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        if (path != null && path.Count > 0)
+        {
+            moveCoroutine = StartCoroutine(MoveAlongPath());
         }
     }
 
@@ -75,7 +95,8 @@ public class Hunter : MonoBehaviour
         {
             transform.localScale = new Vector3(-1, 1, 1);
         }
-        else {
+        else
+        {
             transform.localScale = new Vector3(1, 1, 1);
         }
     }

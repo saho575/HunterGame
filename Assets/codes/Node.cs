@@ -6,7 +6,7 @@ public class Node
     public float hCost;
     public float fCost => gCost + hCost; // f(x) = g(x) + h(x)
     public Node parent;
-
+    public bool hasGold = false;
 
     private Vector2Int boardPosition;
     public Vector3 worldPosition;
@@ -53,6 +53,11 @@ public class Node
             }
         }
         return null;
+    }
+
+    public void SetGold(bool goldStatus)
+    {
+        hasGold = goldStatus;
     }
 
 }

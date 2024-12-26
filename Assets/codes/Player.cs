@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     public Vector2Int currentBoardPosition; // Player'ýn mevcut board pozisyonu
     public float moveDelay = 1f; // Hareketler arasýndaki bekleme süresi
     private bool isMoving = false;
-
+    private Node currentNode;
     void Start()
     {
         if (gridManager == null)
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
         // Player'ýn baþlangýç nodunu belirle
         currentBoardPosition = gridManager.WorldToBoardPosition(transform.position);
         Node startNode = gridManager.GetNode(currentBoardPosition);
-
+        currentNode=startNode;
         if (startNode != null)
         {
             // Player'ý baþlangýç nodunun dünya pozisyonuna taþý
@@ -39,15 +39,15 @@ public class Player : MonoBehaviour
         {
             Vector2Int direction = Vector2Int.zero;
 
-            if (Input.GetKeyDown(KeyCode.W)) direction = -Vector2Int.up;     // Yukarý
-            if (Input.GetKeyDown(KeyCode.S)) direction = -Vector2Int.down;   // Aþaðý
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKey(KeyCode.W)) direction = -Vector2Int.up;     // Yukarý
+            if (Input.GetKey(KeyCode.S)) direction = -Vector2Int.down;   // Aþaðý
+            if (Input.GetKey(KeyCode.A))
             {
                 transform.localScale = new Vector3(-1, 1, 1);
                 direction = Vector2Int.left;   // Sol
             }
                 
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKey(KeyCode.D))
             {
                 transform.localScale = new Vector3(1, 1, 1);
                 direction = Vector2Int.right;   // Sað
@@ -81,6 +81,7 @@ public class Player : MonoBehaviour
             transform.position = targetWorldPosition;
             currentBoardPosition = targetPosition;
             Debug.Log($"Player yeni nodda: {currentBoardPosition}");
+            CheckForGold(targetNode);
         }
         else
         {
@@ -89,5 +90,21 @@ public class Player : MonoBehaviour
 
         yield return new WaitForSeconds(moveDelay);
         isMoving = false;
+    }
+
+    void CheckForGold(Node node)
+    {
+        // Collider'larý kontrol et
+        Collider2D[] colliderCheck = Physics2D.OverlapCircleAll(node.WorldPosition, 0.1f); // 2D oyun için
+        foreach (Collider2D collider in colliderCheck)
+        {
+            if (collider.CompareTag("Gold")) // "Gold" tag'ine sahip altýný bulduk
+            {
+                Destroy(collider.gameObject); // Altýný yok et
+                node.SetGold(false); // Node üzerindeki altýn bilgisini güncelle
+                Debug.Log($"Altýn toplandý: {node.BoardPosition}");
+                break;
+            }
+        }
     }
 }
