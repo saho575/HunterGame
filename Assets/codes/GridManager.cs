@@ -4,7 +4,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 public class GridManager : MonoBehaviour
 {
-    private int gridSizeX, gridSizeY;
+    public int gridSizeX, gridSizeY;
     private Node[,] board;  // Resources klasöründe olmalı.
     public Tilemap tilemap;
     public GameObject goldPrefab;

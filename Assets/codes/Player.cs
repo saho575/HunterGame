@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     public GridManager gridManager;
@@ -105,6 +105,17 @@ public class Player : MonoBehaviour
                 Debug.Log($"Altýn toplandý: {node.BoardPosition}");
                 break;
             }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Eðer çarpýþýlan obje "Merdiven" tagine sahipse
+        if (collision.CompareTag("Merdiven"))
+        {
+            Debug.Log("Merdivene çarptýn!");
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }
