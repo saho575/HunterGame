@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+
 public class GridManager : MonoBehaviour
 {
     public int gridSizeX, gridSizeY;
@@ -56,8 +58,6 @@ public class GridManager : MonoBehaviour
         Debug.Log("Map loaded from GridData with top-left as (0, 0).");
     }
 
-
-
     void SpawnGold(Vector3 position)
     {
         Instantiate(goldPrefab, position, Quaternion.identity);
@@ -83,9 +83,7 @@ public class GridManager : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Debug.Log("adna");
         if (board == null) return;
-        Debug.Log("urfa");
         foreach (var node in board)
         {
             Gizmos.color = node.isWalkable ? Color.green : Color.red;
@@ -111,14 +109,34 @@ public class GridManager : MonoBehaviour
     {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
-            case 0:
-                return GridData.Map1;
             case 1:
+                return GridData.Map1;
+            case 2:
                 return GridData.Map2;
+            case 3:
+                return GridData.Map3;
             default:
                 Debug.LogWarning("Sahnede tanımlı bir harita yok, varsayılan Map1 seçiliyor.");
                 return GridData.Map1;
         }
     }
-    
+
+    // Altın bulunan düğümleri döndürür
+    public List<Node> GetGoldNodes()
+    {
+        List<Node> goldNodes = new List<Node>();
+
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                if (board[x, y].hasGold)
+                {
+                    goldNodes.Add(board[x, y]);
+                }
+            }
+        }
+
+        return goldNodes;
+    }
 }

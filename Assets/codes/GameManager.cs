@@ -4,7 +4,7 @@ public class GameManager : MonoBehaviour
 {
     // Merdiven prefabını referans edin
     public GameObject merdivenPrefab;
-
+    public static int tryagain = 3;
     // GridManager referansı
     public GridManager gridManager;
 

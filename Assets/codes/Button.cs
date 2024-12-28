@@ -4,6 +4,6 @@ public class Button : MonoBehaviour
 {
     public void play()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 }

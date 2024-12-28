@@ -117,5 +117,22 @@ public class Player : MonoBehaviour
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
+        else if (collision.CompareTag("Hunter"))
+        {
+            Debug.Log("Merdivene çarptýn!");
+
+            
+            GameManager.tryagain--;
+            Debug.Log(GameManager.tryagain);
+
+            if (GameManager.tryagain == 0)
+            {
+                SceneManager.LoadScene(4);
+            }
+            else
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
 }

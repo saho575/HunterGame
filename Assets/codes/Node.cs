@@ -11,6 +11,7 @@ public class Node
     private Vector2Int boardPosition;
     public Vector3 worldPosition;
     public bool isWalkable=true;
+    
     public List<Node> Neighbors { get; private set; } = new List<Node>();
     public Vector2Int BoardPosition
     {
