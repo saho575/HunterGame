@@ -6,9 +6,9 @@ public class Hunter : MonoBehaviour
 {
     public Node startNode, targetNode;
     public GridManager gridManager;
-    private List<Node> path; // Hesaplanan yol
+    private List<Node> path;
     private int currentPathIndex = 0;
-    public float moveSpeed = 2f; // NPC hareket hýzý
+    public float moveSpeed = 2f;
     public GameObject Target;
     private Coroutine moveCoroutine;
 
@@ -16,14 +16,14 @@ public class Hunter : MonoBehaviour
     {
         if (gridManager == null)
         {
-            Debug.LogError("GridManager bulunamadý!");
+            Debug.LogError("GridManager not found!");
             return;
         }
 
         startNode = gridManager.GetNode(gridManager.WorldToBoardPosition(transform.position));
         targetNode = gridManager.GetNode(gridManager.WorldToBoardPosition(Target.transform.position));
 
-        CalculatePath(); // Yolu hesapla
+        CalculatePath();
         StartMovement();
     }
 
@@ -33,7 +33,7 @@ public class Hunter : MonoBehaviour
         startNode = gridManager.GetNode(gridManager.WorldToBoardPosition(transform.position));
         if (targetNode == null || targetNode.BoardPosition != newTargetNode.BoardPosition)
         {
-            // Hedef deðiþtiðinde yolu yeniden hesapla ve hareketi sýfýrla
+            // Recalculate path and reset movement if target changes
             targetNode = newTargetNode;
             CalculatePath();
             StartMovement();
@@ -49,11 +49,11 @@ public class Hunter : MonoBehaviour
 
         if (path == null)
         {
-            Debug.LogWarning("Hedefe giden bir yol bulunamadý.");
+            Debug.LogWarning("No path found to the target.");
         }
         else
         {
-            currentPathIndex = 0; // Yeni yol için index sýfýrla
+            currentPathIndex = 0; // Reset index for new path
         }
     }
 
@@ -86,7 +86,7 @@ public class Hunter : MonoBehaviour
             currentPathIndex++;
         }
 
-        Debug.Log("Hunter hedefe ulaþtý!");
+        Debug.Log("Hunter reached the target!");
     }
 
     void Flip()

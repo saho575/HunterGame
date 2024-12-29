@@ -2,29 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+
 public class Hunter2 : MonoBehaviour
 {
     public Node startNode, targetNode;
     public GridManager gridManager;
-    private Node bestMove; // En iyi hareket
-    public float moveSpeed = 2f; // Hareket hýzý
-    public GameObject Target; // Oyuncu
-    public int searchDepth = 5; // Min-max algoritmasý derinliði
+    private Node bestMove;
+    public float moveSpeed = 2f;
+    public GameObject Target;
+    public int searchDepth = 5; // Depth for Minimax algorithm
     public int weight1 = 2, weight2 = 1;
     private Coroutine moveCoroutine;
 
-    Node previousHunterNode = null; // Avcýnýn bir önceki düðümü
-    float captureThreshold = 1.0f; // Yakalama mesafesi
-    float penaltyForRevisiting = 10.0f; // Ayný düðüme dönme cezasý
+    Node previousHunterNode = null;
 
-    Astar astar = new Astar(); // A* algoritmasý örneði
-    Dictionary<(Node, Node), float> distanceCache = new Dictionary<(Node, Node), float>(); // Mesafe önbelleði
+    Astar astar = new Astar(); // A* algorithm instance
+    Dictionary<(Node, Node), float> distanceCache = new Dictionary<(Node, Node), float>(); // Distance cache
 
     void Start()
     {
         if (gridManager == null)
         {
-            Debug.LogError("GridManager bulunamadý!");
+            Debug.LogError("GridManager not found!");
             return;
         }
 
@@ -55,7 +54,7 @@ public class Hunter2 : MonoBehaviour
             StopCoroutine(moveCoroutine);
         }
 
-        // Min-max algoritmasý ile en iyi hareketi hesapla
+        // Calculate the best move using the Minimax algorithm
         bestMove = GetBestMove();
         if (bestMove != null)
         {
@@ -105,7 +104,7 @@ public class Hunter2 : MonoBehaviour
                     alpha = Mathf.Max(alpha, eval);
 
                     if (beta <= alpha)
-                        break; // Alfa-beta budama
+                        break; // Alpha-beta pruning
                 }
             }
 
@@ -124,7 +123,7 @@ public class Hunter2 : MonoBehaviour
                     beta = Mathf.Min(beta, eval);
 
                     if (beta <= alpha)
-                        break; // Alfa-beta budama
+                        break; // Alpha-beta pruning
                 }
             }
 
@@ -134,10 +133,10 @@ public class Hunter2 : MonoBehaviour
 
     float Evaluate(Node hunterNode, Node playerNode)
     {
-        // Basit bir heuristik: Hunter oyuncuya ne kadar yakýnsa o kadar avantajlý
+        // Simple heuristic: The closer the hunter is to the player, the better
         float hunterToPlayer = Vector3.Distance(hunterNode.WorldPosition, playerNode.WorldPosition);
 
-        // Oyuncunun bir altýna yakýn olmasý durumunu cezalandýrabiliriz
+        // Penalize the player being close to gold nodes
         List<Node> goldNodes = gridManager.GetGoldNodes();
         float playerToGold = float.PositiveInfinity;
         foreach (var goldNode in goldNodes)
@@ -149,7 +148,7 @@ public class Hunter2 : MonoBehaviour
             }
         }
 
-        return weight1 * (-hunterToPlayer) + weight2 * (1f / (playerToGold + 1f)); // Daha iyi sonuç için aðýrlýklar eklenebilir
+        return weight1 * (-hunterToPlayer) + weight2 * (1f / (playerToGold + 1f)); // Adjust weights for better results
     }
 
     float GetCachedDistance(Node start, Node end)

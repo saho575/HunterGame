@@ -2,34 +2,37 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+
 public class Player : MonoBehaviour
 {
     public GridManager gridManager;
-    public Vector2Int currentBoardPosition; // Player'ýn mevcut board pozisyonu
-    public float moveDelay = 1f; // Hareketler arasýndaki bekleme süresi
+    public Vector2Int currentBoardPosition;
+    public float moveDelay = 1f;
     private bool isMoving = false;
     private Node currentNode;
+
     void Start()
     {
         if (gridManager == null)
         {
-            Debug.LogError("GridManager bulunamadý!");
+            Debug.LogError("GridManager not found!");
             return;
         }
 
-        // Player'ýn baþlangýç nodunu belirle
+        // Determine the player's starting node
         currentBoardPosition = gridManager.WorldToBoardPosition(transform.position);
         Node startNode = gridManager.GetNode(currentBoardPosition);
-        currentNode=startNode;
+        currentNode = startNode;
+
         if (startNode != null)
         {
-            // Player'ý baþlangýç nodunun dünya pozisyonuna taþý
+            // Transform the player to the starting node's world position
             transform.position = startNode.WorldPosition;
-            Debug.Log($"Player baþlangýç nodunda: {startNode.BoardPosition}");
+            Debug.Log($"Player starting at node: {startNode.BoardPosition}");
         }
         else
         {
-            Debug.LogError("Baþlangýç nodu bulunamadý!");
+            Debug.LogError("Starting node not found!");
         }
     }
 
@@ -39,18 +42,18 @@ public class Player : MonoBehaviour
         {
             Vector2Int direction = Vector2Int.zero;
 
-            if (Input.GetKey(KeyCode.W)) direction = -Vector2Int.up;     // Yukarý
-            if (Input.GetKey(KeyCode.S)) direction = -Vector2Int.down;   // Aþaðý
+            if (Input.GetKey(KeyCode.W)) direction = -Vector2Int.up;
+            if (Input.GetKey(KeyCode.S)) direction = -Vector2Int.down;
             if (Input.GetKey(KeyCode.A))
             {
                 transform.localScale = new Vector3(-1, 1, 1);
-                direction = Vector2Int.left;   // Sol
+                direction = Vector2Int.left;
             }
-                
+
             if (Input.GetKey(KeyCode.D))
             {
                 transform.localScale = new Vector3(1, 1, 1);
-                direction = Vector2Int.right;   // Sað
+                direction = Vector2Int.right;
             }
 
             if (direction != Vector2Int.zero)
@@ -69,7 +72,7 @@ public class Player : MonoBehaviour
 
         if (targetNode != null && targetNode.isWalkable)
         {
-            // Hedef nodun dünya pozisyonuna hareket et
+            // Transform to the target node's world position
             Vector3 targetWorldPosition = targetNode.WorldPosition;
 
             while (Vector3.Distance(transform.position, targetWorldPosition) > 0.1f)
@@ -80,12 +83,12 @@ public class Player : MonoBehaviour
 
             transform.position = targetWorldPosition;
             currentBoardPosition = targetPosition;
-            Debug.Log($"Player yeni nodda: {currentBoardPosition}");
+            Debug.Log($"Player moved to new node: {currentBoardPosition}");
             CheckForGold(targetNode);
         }
         else
         {
-            Debug.LogWarning("Hedef nod yürünebilir deðil veya geçerli deðil.");
+            Debug.LogWarning("Target node is not walkable or invalid.");
         }
 
         yield return new WaitForSeconds(moveDelay);
@@ -94,15 +97,15 @@ public class Player : MonoBehaviour
 
     void CheckForGold(Node node)
     {
-        // Collider'larý kontrol et
-        Collider2D[] colliderCheck = Physics2D.OverlapCircleAll(node.WorldPosition, 0.1f); // 2D oyun için
+        // Check for colliders
+        Collider2D[] colliderCheck = Physics2D.OverlapCircleAll(node.WorldPosition, 0.1f); // For 2D games
         foreach (Collider2D collider in colliderCheck)
         {
-            if (collider.CompareTag("Gold")) // "Gold" tag'ine sahip altýný bulduk
+            if (collider.CompareTag("Gold"))
             {
-                Destroy(collider.gameObject); // Altýný yok et
-                node.SetGold(false); // Node üzerindeki altýn bilgisini güncelle
-                Debug.Log($"Altýn toplandý: {node.BoardPosition}");
+                Destroy(collider.gameObject); // Destroy the gold
+                node.SetGold(false); // Update node's gold status
+                Debug.Log($"Gold collected at: {node.BoardPosition}");
                 break;
             }
         }
@@ -110,22 +113,20 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Eðer çarpýþýlan obje "Merdiven" tagine sahipse
-        if (collision.CompareTag("Merdiven"))
+        // If the collided object has the "Ladder" tag
+        if (collision.CompareTag("Ladder"))
         {
-            Debug.Log("Merdivene çarptýn!");
-
+            Debug.Log("Collided with a ladder!");
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
         else if (collision.CompareTag("Hunter"))
         {
-            Debug.Log("Merdivene çarptýn!");
+            Debug.Log("Collided with a hunter!");
 
-            
-            GameManager.tryagain--;
-            Debug.Log(GameManager.tryagain);
+            GameManager.tryAgain--;
+            Debug.Log(GameManager.tryAgain);
 
-            if (GameManager.tryagain == 0)
+            if (GameManager.tryAgain == 0)
             {
                 SceneManager.LoadScene(4);
             }

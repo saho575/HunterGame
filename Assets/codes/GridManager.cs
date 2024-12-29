@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class GridManager : MonoBehaviour
 {
     public int gridSizeX, gridSizeY;
-    private Node[,] board;  // Resources klasöründe olmalı.
+    private Node[,] board;
     public Tilemap tilemap;
     public GameObject goldPrefab;
 
@@ -19,8 +19,8 @@ public class GridManager : MonoBehaviour
 
     void LoadMapFromData()
     {
-        gridSizeX = getScene().GetLength(1); // Sütun sayısı (X boyutu)
-        gridSizeY = getScene().GetLength(0); // Satır sayısı (Y boyutu)
+        gridSizeX = getScene().GetLength(1); // Column count (X dimension).
+        gridSizeY = getScene().GetLength(0); // Row count (Y dimension).
 
         board = new Node[gridSizeX, gridSizeY];
 
@@ -33,20 +33,20 @@ public class GridManager : MonoBehaviour
             {
                 int cellValue = getScene()[y, x];
 
-                // Sol üst köşeye göre worldPosition hesaplanıyor.
+                // Starting position in world coordinates (top-left corner).
                 Vector3 worldPosition = startPosition + new Vector3(x, -y, 0);
 
                 Node node = new Node();
                 node.InitializeNode(new Vector2Int(x, y), worldPosition);
 
-                // '1' -> Engel, '2' -> Altın, '0' -> Yürünebilir
+                // '1' -> Obstacle, '2' -> Gold, '0' -> Walkable
                 if (cellValue == 1)
                 {
                     node.isWalkable = false;
                 }
                 else if (cellValue == 2)
                 {
-                    // Altın yerleştir
+                    // Place gold.
                     node.SetGold(true);
                     SpawnGold(worldPosition);
                 }
@@ -116,12 +116,11 @@ public class GridManager : MonoBehaviour
             case 3:
                 return GridData.Map3;
             default:
-                Debug.LogWarning("Sahnede tanımlı bir harita yok, varsayılan Map1 seçiliyor.");
+                Debug.LogWarning("No defined map found in the scene, defaulting to Map1.");
                 return GridData.Map1;
         }
     }
 
-    // Altın bulunan düğümleri döndürür
     public List<Node> GetGoldNodes()
     {
         List<Node> goldNodes = new List<Node>();
