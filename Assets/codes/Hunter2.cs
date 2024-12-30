@@ -16,9 +16,6 @@ public class Hunter2 : MonoBehaviour
 
     Node previousHunterNode = null;
 
-    Astar astar = new Astar(); // A* algorithm instance
-    Dictionary<(Node, Node), float> distanceCache = new Dictionary<(Node, Node), float>(); // Distance cache
-
     void Start()
     {
         if (gridManager == null)
@@ -149,25 +146,6 @@ public class Hunter2 : MonoBehaviour
         }
 
         return weight1 * (-hunterToPlayer) + weight2 * (1f / (playerToGold + 1f)); // Adjust weights for better results
-    }
-
-    float GetCachedDistance(Node start, Node end)
-    {
-        if (distanceCache.TryGetValue((start, end), out float cachedDistance))
-        {
-            return cachedDistance;
-        }
-        else
-        {
-            float distance = astar.FindPath(start, end).Count;
-            distanceCache[(start, end)] = distance;
-            return distance;
-        }
-    }
-
-    IEnumerable<Node> PredictPlayerMoves(Node playerNode)
-    {
-        return playerNode.Neighbors.Where(neighbor => neighbor.isWalkable);
     }
 
     IEnumerator MoveToNode(Node targetNode)

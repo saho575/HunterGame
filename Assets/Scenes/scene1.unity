@@ -552,7 +552,7 @@ GameObject:
   - component: {fileID: 819242501}
   - component: {fileID: 819242500}
   m_Layer: 0
-  m_Name: GamaManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -570,7 +570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16e90ea618c5a8499baed7bdc4a2234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  merdivenPrefab: {fileID: 6329674102736027312, guid: 541a26bd6f6fe0042a26ef186ff90268, type: 3}
+  ladderPrefab: {fileID: 6329674102736027312, guid: 541a26bd6f6fe0042a26ef186ff90268, type: 3}
   gridManager: {fileID: 910282865}
 --- !u!4 &819242501
 Transform:
